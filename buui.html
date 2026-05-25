@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>부의금 내역</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root {
+  --blue: #3B6EF8;
+  --blue-dark: #2A57D9;
+  --blue-light: #EEF2FF;
+  --purple: #7C5CFC;
+  --purple-light: #F3EFFF;
+  --green: #1BC47D;
+  --green-light: #E6FAF3;
+  --gray-50: #F8F9FC;
+  --gray-100: #F1F3F8;
+  --gray-200: #E4E8F0;
+  --gray-300: #CDD3DF;
+  --gray-400: #9BA5B8;
+  --gray-500: #6B7690;
+  --gray-700: #3A4259;
+  --gray-900: #1A1E2E;
+  --white: #ffffff;
+  --shadow-sm: 0 2px 8px rgba(30,40,80,0.07);
+  --shadow-md: 0 4px 20px rgba(30,40,80,0.10);
+  --shadow-lg: 0 8px 32px rgba(59,110,248,0.13);
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+  font-family: 'Pretendard', -apple-system, sans-serif;
+  background: var(--gray-50);
+  color: var(--gray-900);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── 상단 헤더 ─── */
+.top-bar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 56px;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 17px;
+  font-weight: 800;
+  color: var(--blue);
+  letter-spacing: -0.5px;
+}
+.logo-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+.top-bar-right { font-size: 13px; color: var(--gray-400); font-weight: 500; }
+
+/* ─── 히어로 카드 ─── */
+.hero {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--purple) 100%);
+  padding: 28px 20px 32px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  right: -30px; top: -30px;
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.07);
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: 40px; bottom: -50px;
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.hero-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 6px;
+  letter-spacing: 0.2px;
+}
+.hero-title {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.25;
+  letter-spacing: -0.7px;
+  margin-bottom: 18px;
+}
+.hero-title span { color: rgba(255,255,255,0.75); font-size: 16px; font-weight: 500; display: block; margin-top: 4px; }
+.hero-stats {
+  display: flex;
+  gap: 12px;
+}
+.hero-stat {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  flex: 1;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.hero-stat-label {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.hero-stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.5px;
+}
+.hero-stat-unit { font-size: 13px; font-weight: 600; }
+
+/* ─── 검색 ─── */
+.search-section {
+  padding: 20px 16px 0;
+}
+.search-box {
+  position: relative;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: var(--gray-400);
+  pointer-events: none;
+}
+.search-input {
+  width: 100%;
+  padding: 16px 50px 16px 48px;
+  border: none;
+  font-size: 16px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 500;
+  color: var(--gray-900);
+  background: transparent;
+  outline: none;
+}
+.search-input::placeholder { color: var(--gray-400); font-weight: 400; }
+.search-clear {
+  position: absolute;
+  right: 14px; top: 50%;
+  transform: translateY(-50%);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--gray-200);
+  border: none;
+  cursor: pointer;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--gray-500);
+}
+.search-clear.show { display: flex; }
+
+/* ─── 정렬/필터 ─── */
+.controls {
+  padding: 16px 16px 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.controls::-webkit-scrollbar { display: none; }
+.chip {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 100px;
+  border: 1.5px solid var(--gray-200);
+  background: var(--white);
+  font-size: 14px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip.active {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(59,110,248,0.3);
+}
+
+/* ─── 정렬 바 ─── */
+.sort-bar {
+  padding: 14px 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.sort-label {
+  font-size: 12px;
+  color: var(--gray-400);
+  font-weight: 500;
+  margin-right: 2px;
+}
+.sort-btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-200);
+  background: var(--white);
+  font-size: 12px;
+  font-family: 'Pretendard', sans-serif;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.sort-btn.active {
+  background: var(--gray-900);
+  border-color: var(--gray-900);
+  color: #fff;
+}
+
+/* ─── 결과 요약 ─── */
+.result-bar {
+  padding: 14px 16px 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.result-count { font-size: 13px; color: var(--gray-400); font-weight: 500; }
+.result-count strong { color: var(--blue); font-weight: 700; }
+.result-sum { font-size: 14px; font-weight: 700; color: var(--gray-700); letter-spacing: -0.3px; }
+
+/* ─── 카드 리스트 ─── */
+.list {
+  padding: 4px 16px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-200);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: box-shadow 0.15s, transform 0.1s;
+  cursor: default;
+}
+.card:active { box-shadow: var(--shadow-md); transform: scale(0.99); }
+
+.avatar {
+  width: 48px; height: 48px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 800;
+  flex-shrink: 0;
+  letter-spacing: -1px;
+}
+.avatar.blue { background: var(--blue-light); color: var(--blue); }
+.avatar.purple { background: var(--purple-light); color: var(--purple); }
+.avatar.green { background: var(--green-light); color: var(--green); }
+
+.card-body { flex: 1; min-width: 0; }
+.card-name {
+  font-size: 17px; font-weight: 700;
+  color: var(--gray-900);
+  letter-spacing: -0.3px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  margin-bottom: 5px;
+}
+.tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.tag {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1px;
+}
+.tag-group { background: var(--blue-light); color: var(--blue); }
+.tag-bank { background: #FFF7ED; color: #D97706; }
+.tag-sms { background: var(--green-light); color: #0D9E63; }
+.tag-kakao { background: #FEFCE8; color: #CA8A04; }
+.tag-nosms { background: #FEF2F2; color: #DC2626; }
+.tag-unknown { background: #FEF2F2; color: #DC2626; }
+
+.card-right { flex-shrink: 0; text-align: right; }
+.amount {
+  font-size: 20px; font-weight: 800;
+  color: var(--blue);
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+.amount.high { color: var(--purple); }
+.amount.vhigh { color: #E53E3E; }
+.amount-unit { font-size: 12px; font-weight: 600; color: var(--gray-400); margin-top: 2px; }
+
+/* 그룹 구분 헤더 */
+.group-header {
+  padding: 16px 4px 6px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1.5px solid var(--gray-200);
+  margin-bottom: 2px;
+}
+.group-header-name {
+  font-size: 13px; font-weight: 700;
+  color: var(--gray-500);
+  letter-spacing: 0.3px;
+}
+.group-header-total {
+  font-size: 13px; font-weight: 700;
+  color: var(--blue);
+}
+
+/* 빈 결과 */
+.empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--gray-400); font-size: 16px; font-weight: 500;
+}
+.empty-icon { font-size: 52px; margin-bottom: 12px; opacity: 0.5; }
+</style>
+</head>
+<body>
+
+<!-- 상단 바 -->
+<div class="top-bar">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    부의금 내역
+  </div>
+  <div class="top-bar-right" id="dateLabel">할아버지 장례식</div>
+</div>
+
+<!-- 히어로 -->
+<div class="hero">
+  <div class="hero-label">전체 수령 부의금</div>
+  <div class="hero-title" id="heroTotal">계산 중…<span id="heroSub"></span></div>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-label">총 인원</div>
+      <div class="hero-stat-value" id="heroCount">–<span class="hero-stat-unit">명</span></div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-label">계좌 입금</div>
+      <div class="hero-stat-value" id="heroBankCount">–<span class="hero-stat-unit">명</span></div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-label">최고 금액</div>
+      <div class="hero-stat-value" id="heroMax">–</div>
+    </div>
+  </div>
+</div>
+
+<!-- 검색 -->
+<div class="search-section">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" id="searchInput" placeholder="이름 또는 그룹명 검색" autocomplete="off">
+    <button class="search-clear" id="searchClear">✕</button>
+  </div>
+</div>
+
+<!-- 그룹 필터 -->
+<div class="controls" id="filterWrap"></div>
+
+<!-- 정렬 -->
+<div class="sort-bar">
+  <span class="sort-label">정렬</span>
+  <button class="sort-btn active" data-sort="name">이름순</button>
+  <button class="sort-btn" data-sort="amount">금액순</button>
+  <button class="sort-btn" data-sort="group">그룹순</button>
+</div>
+
+<!-- 결과 요약 -->
+<div class="result-bar">
+  <div class="result-count" id="resultCount"></div>
+  <div class="result-sum" id="resultSum"></div>
+</div>
+
+<!-- 리스트 -->
+<div class="list" id="list"></div>
+
+<script>
+const DATA = [
+  {방식:'은행계좌입금',이름:'한명석',그룹:'경남사',금액:50000,문자:'O'},
+  {방식:'',이름:'방병석',그룹:'경희대나무태권도',금액:100000,문자:'O'},
+  {방식:'',이름:'과천노인복지관 상조회',그룹:'과천노인복지회관',금액:100000,문자:''},
+  {방식:'',이름:'박흥미',그룹:'과천노인복지회관',금액:50000,문자:''},
+  {방식:'',이름:'황경실',그룹:'과천노인복지회관',금액:50000,문자:''},
+  {방식:'',이름:'박응남',그룹:'광해농산',금액:300000,문자:'O'},
+  {방식:'',이름:'강경윤',그룹:'녹색당',금액:50000,문자:'O'},
+  {방식:'',이름:'김관훈',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'김현수',그룹:'녹색당',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'민병운',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'박동기(범이)',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'박종범',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'서창석',그룹:'녹색당',금액:50000,문자:'O'},
+  {방식:'',이름:'송태희',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'신진구',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'정영선(쉬리)',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'정장환(엄친아)',그룹:'녹색당',금액:50000,문자:'O'},
+  {방식:'',이름:'최문석',그룹:'녹색당',금액:50000,문자:'O'},
+  {방식:'',이름:'최병호(글록)',그룹:'녹색당',금액:100000,문자:'O'},
+  {방식:'',이름:'김경모',그룹:'대한음향',금액:200000,문자:'O'},
+  {방식:'',이름:'김대현(창수)',그룹:'디지탈닥터',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'홍석수',그룹:'새마',금액:50000,문자:'O'},
+  {방식:'',이름:'서울기고일동',그룹:'서울기고일동',금액:500000,문자:''},
+  {방식:'은행계좌입금',이름:'서울전자',그룹:'서울전자',금액:100000,문자:'O'},
+  {방식:'',이름:'김명선',그룹:'엄마',금액:100000,문자:''},
+  {방식:'은행계좌입금',이름:'김장진',그룹:'엄마',금액:50000,문자:''},
+  {방식:'',이름:'박원기',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'이경희',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'이미향',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'이신화',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'전화선',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'진선건',그룹:'엄마',금액:200000,문자:''},
+  {방식:'',이름:'진선민',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'진인화',그룹:'엄마',금액:300000,문자:''},
+  {방식:'',이름:'차난근',그룹:'엄마',금액:100000,문자:''},
+  {방식:'',이름:'이장원',그룹:'에어로',금액:100000,문자:'O'},
+  {방식:'',이름:'유종옥',그룹:'우종기업',금액:100000,문자:'O'},
+  {방식:'',이름:'유홍식',그룹:'우종기업',금액:50000,문자:'O'},
+  {방식:'',이름:'으뜸회',그룹:'으뜸회',금액:300000,문자:''},
+  {방식:'',이름:'연두성',그룹:'인덕대',금액:100000,문자:'카톡O'},
+  {방식:'',이름:'장광우',그룹:'인덕대',금액:100000,문자:'O'},
+  {방식:'',이름:'한상환',그룹:'인덕대',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'임선',그룹:'정읍',금액:50000,문자:'X'},
+  {방식:'은행계좌입금',이름:'박용범',그룹:'큐미스',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'조경근',그룹:'타박네',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'강경철',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'강영구',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'강종구',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'권기현',그룹:'',금액:100000,문자:'X'},
+  {방식:'은행계좌입금',이름:'권헌식',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'김남진',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'김대중',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'김덕중',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'김명규',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'김석현',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'김승만',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'김연수',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'김용관',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'김유식',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'김은령',그룹:'',금액:100000,문자:''},
+  {방식:'은행계좌입금',이름:'김재학',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'김진우',그룹:'',금액:200000,문자:'O'},
+  {방식:'',이름:'김춘환',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'김태윤',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'김한규',그룹:'',금액:300000,문자:'O'},
+  {방식:'은행계좌입금',이름:'나관우',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'노우식',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'문용수',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'민경준',그룹:'',금액:300000,문자:'O'},
+  {방식:'',이름:'박병대',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'박승호',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'박준일',그룹:'',금액:150000,문자:'O'},
+  {방식:'',이름:'박태수',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'박희윤',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'백광재',그룹:'',금액:200000,문자:'O'},
+  {방식:'',이름:'백효선',그룹:'',금액:200000,문자:'O'},
+  {방식:'은행계좌입금',이름:'변나현',그룹:'',금액:100000,문자:''},
+  {방식:'은행계좌입금',이름:'변임숙',그룹:'',금액:50000,문자:''},
+  {방식:'',이름:'서영국',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'손성일',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'손영범',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'송관헌',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'심성인',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'오채근',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'오필성',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'윤재웅',그룹:'',금액:200000,문자:'O'},
+  {방식:'',이름:'윤정욱',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'윤종호',그룹:'',금액:30000,문자:'O'},
+  {방식:'',이름:'이동규',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이동호',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이봉연',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이영근',그룹:'',금액:300000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이영찬',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이정철',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이종권',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이종준',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이준원',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이지상',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이창식',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이한모',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'이한배',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'이홍',그룹:'',금액:200000,문자:'O'},
+  {방식:'은행계좌입금',이름:'인치혁',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'임보현',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'임승완',그룹:'',금액:200000,문자:'O'},
+  {방식:'은행계좌입금',이름:'임철',그룹:'',금액:200000,문자:'O'},
+  {방식:'',이름:'임홍선',그룹:'',금액:150000,문자:'O'},
+  {방식:'은행계좌입금',이름:'장윤식',그룹:'',금액:300000,문자:'O'},
+  {방식:'',이름:'전중신',그룹:'',금액:200000,문자:'O'},
+  {방식:'',이름:'정상형',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'정세진',그룹:'',금액:300000,문자:'O'},
+  {방식:'은행계좌입금',이름:'정영복',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'정영성',그룹:'',금액:50000,문자:'O'},
+  {방식:'',이름:'정용민',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'정용원',그룹:'',금액:100000,문자:'모르는 사람'},
+  {방식:'은행계좌입금',이름:'정호상',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'조남형',그룹:'',금액:200000,문자:'O'},
+  {방식:'은행계좌입금',이름:'조재균',그룹:'',금액:50000,문자:'O'},
+  {방식:'은행계좌입금',이름:'최승용',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'최용중',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'최재희',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'한광철',그룹:'',금액:100000,문자:'O'},
+  {방식:'은행계좌입금',이름:'한재국',그룹:'',금액:100000,문자:'O'},
+  {방식:'',이름:'한정운',그룹:'',금액:200000,문자:'O'},
+];
+
+// 히어로 통계
+const totalAll = DATA.reduce((a,r)=>a+r.금액,0);
+const bankCount = DATA.filter(r=>r.방식==='은행계좌입금').length;
+const maxAmt = Math.max(...DATA.map(r=>r.금액));
+document.getElementById('heroTotal').textContent = (totalAll/10000).toLocaleString() + '만원';
+document.getElementById('heroCount').innerHTML = DATA.length + '<span class="hero-stat-unit">명</span>';
+document.getElementById('heroBankCount').innerHTML = bankCount + '<span class="hero-stat-unit">명</span>';
+document.getElementById('heroMax').innerHTML = (maxAmt/10000) + '<span class="hero-stat-unit">만원</span>';
+
+// 필터 탭
+const groups = ['전체', ...new Set(DATA.map(r=>r.그룹||'개인').filter(Boolean).sort())];
+const filterWrap = document.getElementById('filterWrap');
+groups.forEach(g => {
+  const btn = document.createElement('button');
+  btn.className = 'chip' + (g==='전체'?' active':'');
+  btn.dataset.group = g;
+  btn.textContent = g;
+  filterWrap.appendChild(btn);
+});
+
+let activeGroup = '전체', activeSort = 'name', searchTerm = '';
+
+const avatarColors = ['blue','purple','green'];
+const getColor = name => avatarColors[name.charCodeAt(0) % 3];
+
+function getFiltered() {
+  let d = DATA.map(r=>({...r, 그룹표시: r.그룹||'개인'}));
+  if(activeGroup!=='전체') d = d.filter(r=>r.그룹표시===activeGroup);
+  if(searchTerm) {
+    const q = searchTerm.toLowerCase();
+    d = d.filter(r=>r.이름.toLowerCase().includes(q)||r.그룹표시.toLowerCase().includes(q));
+  }
+  if(activeSort==='name') d.sort((a,b)=>a.이름.localeCompare(b.이름,'ko'));
+  else if(activeSort==='amount') d.sort((a,b)=>b.금액-a.금액);
+  else if(activeSort==='group') d.sort((a,b)=>a.그룹표시.localeCompare(b.그룹표시,'ko')||a.이름.localeCompare(b.이름,'ko'));
+  return d;
+}
+
+function fmtAmt(n) {
+  if(n>=10000) return (n/10000) + '만';
+  return n.toLocaleString();
+}
+function fmtFull(n) { return n.toLocaleString() + '원'; }
+
+function render() {
+  const data = getFiltered();
+  const list = document.getElementById('list');
+  const sum = data.reduce((a,r)=>a+r.금액,0);
+
+  document.getElementById('resultCount').innerHTML = `<strong>${data.length}</strong>명`;
+  document.getElementById('resultSum').textContent = fmtFull(sum);
+  list.innerHTML = '';
+
+  if(!data.length) {
+    list.innerHTML = '<div class="empty"><div class="empty-icon">🔍</div>검색 결과가 없습니다</div>';
+    return;
+  }
+
+  if(activeSort==='group') {
+    const grouped = {};
+    data.forEach(r=>{
+      if(!grouped[r.그룹표시]) grouped[r.그룹표시]=[];
+      grouped[r.그룹표시].push(r);
+    });
+    Object.entries(grouped).forEach(([g, rows])=>{
+      const gh = document.createElement('div');
+      gh.className = 'group-header';
+      const gSum = rows.reduce((a,r)=>a+r.금액,0);
+      gh.innerHTML = `<span class="group-header-name">${g}</span><span class="group-header-total">${fmtFull(gSum)}</span>`;
+      list.appendChild(gh);
+      rows.forEach(r=>list.appendChild(makeCard(r)));
+    });
+  } else {
+    data.forEach(r=>list.appendChild(makeCard(r)));
+  }
+}
+
+function makeCard(r) {
+  const card = document.createElement('div');
+  card.className = 'card';
+  const color = getColor(r.이름);
+  const isBank = r.방식==='은행계좌입금';
+  const amtClass = r.금액>=500000?'amount vhigh':r.금액>=300000?'amount high':'amount';
+
+  let tags = '';
+  if(r.그룹&&r.그룹!=='개인') tags += `<span class="tag tag-group">${r.그룹}</span>`;
+  if(isBank) tags += `<span class="tag tag-bank">계좌입금</span>`;
+  if(r.문자==='O') tags += `<span class="tag tag-sms">문자✓</span>`;
+  else if(r.문자==='카톡O') tags += `<span class="tag tag-kakao">카톡✓</span>`;
+  else if(r.문자==='X') tags += `<span class="tag tag-nosms">미확인</span>`;
+  else if(r.문자==='모르는 사람') tags += `<span class="tag tag-unknown">모르는 분</span>`;
+
+  card.innerHTML = `
+    <div class="avatar ${color}">${r.이름.charAt(0)}</div>
+    <div class="card-body">
+      <div class="card-name">${r.이름}</div>
+      <div class="tags">${tags||''}</div>
+    </div>
+    <div class="card-right">
+      <div class="${amtClass}">${fmtAmt(r.금액)}</div>
+      <div class="amount-unit">원</div>
+    </div>
+  `;
+  return card;
+}
+
+// 이벤트
+document.getElementById('searchInput').addEventListener('input', e=>{
+  searchTerm = e.target.value;
+  document.getElementById('searchClear').classList.toggle('show', !!searchTerm);
+  render();
+});
+document.getElementById('searchClear').addEventListener('click', ()=>{
+  document.getElementById('searchInput').value = '';
+  searchTerm = '';
+  document.getElementById('searchClear').classList.remove('show');
+  render();
+});
+
+filterWrap.addEventListener('click', e=>{
+  const btn = e.target.closest('.chip');
+  if(!btn) return;
+  document.querySelectorAll('.chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  activeGroup = btn.dataset.group;
+  render();
+});
+
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeSort = btn.dataset.sort;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
